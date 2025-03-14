@@ -1,3 +1,4 @@
+# .github/workflows/main-pipeline.yml
 name: Main Pipeline (Production)
 
 on:
@@ -14,7 +15,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: 8.0.x
           
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -44,16 +45,18 @@ jobs:
         
       - name: Create build artifacts
         run: |
-          mkdir -p artifacts
-          dotnet publish src/Vanguard.API -c Release -o artifacts/api
-          cp -r src/Vanguard.Angular/dist/Vanguard-Angular artifacts/Angular
+          mkdir -p artifacts/api
+          mkdir -p artifacts/Angular
+          dotnet publish src/Vanguard.Api -c Release -o artifacts/api
+          cp -r src/Vanguard.Angular/dist/Vanguard-Angular/* artifacts/Angular/ || cp -r src/Vanguard.Angular/dist/* artifacts/Angular/
       
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
           name: build-artifacts
           path: artifacts/
-          
+          retention-days: 1
+
   create-release:
     name: Create Release
     needs: build-and-test
@@ -99,6 +102,9 @@ jobs:
           name: build-artifacts
           path: artifacts/
       
+      - name: Display structure of downloaded files
+        run: ls -R artifacts/
+      
       - name: Deploy to Heroku (Production)
         uses: akhileshns/heroku-deploy@v3.12.13
         with:
@@ -123,6 +129,9 @@ jobs:
         with:
           name: build-artifacts
           path: artifacts/
+      
+      - name: Display structure of downloaded files
+        run: ls -R artifacts/
           
       - name: Deploy to GitHub Pages (Production)
         uses: JamesIves/github-pages-deploy-action@v4

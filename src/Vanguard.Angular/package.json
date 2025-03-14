@@ -8,7 +8,11 @@
     "start": "ng serve --host=127.0.0.1",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadless --code-coverage",
+    "build:staging": "ng build --configuration=staging",
+    "build:production": "ng build --configuration=production",
+    "start:ci": "ng serve --configuration=test"
   },
   "private": true,
   "dependencies": {
