@@ -10,15 +10,15 @@ jobs:
     name: Build and Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 9.0.x
           
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
           
@@ -51,7 +51,7 @@ jobs:
           cp -r src/Vanguard.Angular/dist/Vanguard-Angular/* artifacts/Angular/ || cp -r src/Vanguard.Angular/dist/* artifacts/Angular/
       
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
           path: artifacts/
@@ -64,7 +64,7 @@ jobs:
     outputs:
       version: ${{ steps.tag_version.outputs.new_tag }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           
