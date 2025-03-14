@@ -18,7 +18,7 @@ jobs:
           dotnet-version: 9.0.x
           
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4 
         with:
           node-version: 18
           
@@ -38,7 +38,7 @@ jobs:
         run: cd src/Vanguard.Angular && npm run lint
         
       - name: Frontend - Test
-        run: cd src/Vanguard.Angular && npm run test:ci
+        run: cd src/Vanguard.Angular && npm run test
         
       - name: Frontend - Build
         run: cd src/Vanguard.Angular && npm run build:production
