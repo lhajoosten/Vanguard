@@ -1,0 +1,100 @@
+name: Develop Pipeline (Staging)
+
+on:
+  push:
+    branches: [ develop ]
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          
+      - name: Backend - Restore dependencies
+        run: dotnet restore
+        
+      - name: Backend - Build
+        run: dotnet build --no-restore --configuration Release
+        
+      - name: Backend - Test
+        run: dotnet test --no-build --filter "Category=Unit|Category=Integration" --configuration Release
+        
+      - name: Frontend - Install dependencies
+        run: cd src/Vanguard.Angular && npm ci
+        
+      - name: Frontend - Lint
+        run: cd src/Vanguard.Angular && npm run lint
+        
+      - name: Frontend - Test
+        run: cd src/Vanguard.Angular && npm run test:ci
+        
+      - name: Frontend - Build
+        run: cd src/Vanguard.Angular && npm run build:staging
+        
+      - name: Create build artifacts
+        run: |
+          mkdir -p artifacts
+          dotnet publish src/Vanguard.API -c Release -o artifacts/api
+          cp -r src/Vanguard.Angular/dist/Vanguard-Angular artifacts/Angular
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: artifacts/
+
+  deploy-backend-staging:
+    name: Deploy Backend to Staging
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifacts
+          path: artifacts/
+      
+      - name: Deploy to Heroku (Staging)
+        uses: akhileshns/heroku-deploy@v3.12.13
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: "vanguard-api-staging"
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          appdir: "artifacts/api"
+          
+      - name: Run database migrations
+        run: |
+          heroku run --app vanguard-api-staging "dotnet Vanguard.Api.dll -- migrate" || echo "Migration failed"
+
+  deploy-frontend-staging:
+    name: Deploy Frontend to Staging
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifacts
+          path: artifacts/
+          
+      - name: Deploy to GitHub Pages (Staging)
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: artifacts/Angular
+          branch: gh-pages
+          target-folder: staging

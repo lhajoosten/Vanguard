@@ -1,0 +1,61 @@
+name: Unit Tests
+
+on:
+  push:
+    branches: [ '**' ]
+  pull_request:
+    branches: [ develop, main ]
+
+jobs:
+  backend-tests:
+    name: Backend Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 9.0.x
+          
+      - name: Restore dependencies
+        run: dotnet restore
+        
+      - name: Build
+        run: dotnet build --no-restore --configuration Debug
+        
+      - name: Test
+        run: dotnet test --no-build --verbosity normal --filter Category=Unit
+      
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: backend-test-results
+          path: TestResults/
+        if: always()
+
+  frontend-tests:
+    name: Frontend Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: 'src/Vanguard.Angular/package-lock.json'
+          
+      - name: Install dependencies
+        run: cd src/Vanguard.Angular && npm ci
+        
+      - name: Run tests
+        run: cd src/Vanguard.Angular && npm run test:ci
+        
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: frontend-test-results
+          path: src/Vanguard.Angular/coverage/
+        if: always()
