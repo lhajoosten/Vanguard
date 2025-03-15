@@ -1,0 +1,131 @@
+# .github/workflows/staging-pipeline.yml
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [staging]
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4.3.0
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4.2.0
+        with:
+          node-version: 18
+
+      - name: Backend - Restore dependencies
+        run: dotnet restore
+
+      - name: Backend - Build
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Backend - Test
+        run: dotnet test --no-build --filter "Category=Unit|Category=Integration" --configuration Release
+
+      - name: Frontend - Install dependencies
+        run: cd src/Vanguard.Angular && npm ci
+
+      - name: Frontend - Test
+        run: cd src/Vanguard.Angular && npm run test:ci
+
+      - name: Backend - Publish
+        run: dotnet publish src/Vanguard.Api/Vanguard.Api.csproj -c Release -o publish
+
+      - name: Upload API build artifacts
+        uses: actions/upload-artifact@v4.6.1
+        with:
+          name: api-build
+          path: publish/
+          retention-days: 1
+
+      - name: Frontend - Build for Staging
+        run: cd src/Vanguard.Angular && npm run build:staging
+
+      - name: Upload frontend build artifacts
+        uses: actions/upload-artifact@v4.6.1
+        with:
+          name: frontend-build
+          path: src/Vanguard.Angular/dist/vanguard-web/browser/
+          retention-days: 1
+
+  deploy-backend:
+    name: Deploy API to Staging
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    environment: staging # Environment for approval and protection
+    steps:
+      - name: Download API build artifacts
+        uses: actions/download-artifact@v4.1.9
+        with:
+          name: api-build
+          path: api-build
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: "vanguard-api-staging"
+          slot-name: "production"
+          package: api-build
+
+  deploy-frontend:
+    name: Deploy Frontend to Staging
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    environment: staging # Environment for approval and protection
+    steps:
+      - name: Download frontend build artifacts
+        uses: actions/download-artifact@v4.1.9
+        with:
+          name: frontend-build
+          path: frontend-build
+
+      - name: Login to Azure
+        uses: azure/login@v2.2.0
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Azure Static Web App
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.STATIC_WEB_APP_TOKEN_STAGING }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "frontend-build"
+          skip_app_build: true
+          output_location: ""
+
+  run-migrations:
+    name: Run Database Migrations
+    needs: deploy-backend
+    runs-on: ubuntu-latest
+    environment: staging # Environment for approval
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4.3.0
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Install EF Core CLI
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Run Migrations
+        run: |
+          cd src/Vanguard.Infrastructure
+          dotnet ef database update --startup-project ../Vanguard.Api --connection "${{ secrets.STAGING_DB_CONNECTION }}"

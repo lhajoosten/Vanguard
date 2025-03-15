@@ -1,100 +1,62 @@
-name: Develop Pipeline (Staging)
+# .github/workflows/develop-pipeline.yml
+name: Develop CI/CD
 
 on:
   push:
-    branches: [ develop ]
+    branches: [develop]
+  workflow_dispatch: # Allow manual triggering
 
 jobs:
   build-and-test:
     name: Build and Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      
+      - uses: actions/checkout@v4.2.2
+
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v4.3.0
         with:
           dotnet-version: 9.0.x
-          
+
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4.2.0
         with:
           node-version: 18
-          
+
       - name: Backend - Restore dependencies
         run: dotnet restore
-        
+
       - name: Backend - Build
-        run: dotnet build --no-restore --configuration Release
-        
-      - name: Backend - Test
-        run: dotnet test --no-build --filter "Category=Unit|Category=Integration" --configuration Release
-        
+        run: dotnet build --no-restore --configuration Debug
+
+      - name: Backend - Unit Test
+        run: dotnet test --no-build --filter "Category=Unit" --configuration Debug
+
       - name: Frontend - Install dependencies
         run: cd src/Vanguard.Angular && npm ci
-        
+
       - name: Frontend - Lint
         run: cd src/Vanguard.Angular && npm run lint
-        
+
       - name: Frontend - Test
         run: cd src/Vanguard.Angular && npm run test:ci
-        
+
+      - name: Backend - Publish
+        run: dotnet publish src/Vanguard.Api/Vanguard.Api.csproj -c Debug -o publish
+
+      - name: Upload API build artifacts
+        uses: actions/upload-artifact@v4.6.1
+        with:
+          name: api-build
+          path: publish/
+          retention-days: 1
+
       - name: Frontend - Build
-        run: cd src/Vanguard.Angular && npm run build:staging
-        
-      - name: Create build artifacts
-        run: |
-          mkdir -p artifacts
-          dotnet publish src/Vanguard.Api -c Release -o artifacts/api
-          cp -r src/Vanguard.Angular/dist/Vanguard-Angular artifacts/Angular
-      
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-artifacts
-          path: artifacts/
+        run: cd src/Vanguard.Angular && npm run build:dev
 
-  deploy-backend-staging:
-    name: Deploy Backend to Staging
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
+      - name: Upload frontend build artifacts
+        uses: actions/upload-artifact@v4.6.1
         with:
-          name: build-artifacts
-          path: artifacts/
-      
-      - name: Deploy to Heroku (Staging)
-        uses: akhileshns/heroku-deploy@v3.12.13
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: "vanguard-api-staging"
-          heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          appdir: "artifacts/api"
-          
-      - name: Run database migrations
-        run: |
-          heroku run --app vanguard-api-staging "dotnet Vanguard.Api.dll -- migrate" || echo "Migration failed"
-
-  deploy-frontend-staging:
-    name: Deploy Frontend to Staging
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-          path: artifacts/
-          
-      - name: Deploy to GitHub Pages (Staging)
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: artifacts/Angular
-          branch: gh-pages
-          target-folder: staging
+          name: frontend-build
+          path: src/Vanguard.Angular/dist/vanguard-web/browser/
+          retention-days: 1
