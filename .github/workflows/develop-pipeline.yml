@@ -1,0 +1,67 @@
+# .github/workflows/develop-pipeline.yml
+name: Develop CI/CD
+
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4.3.0
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4.2.0
+        with:
+          node-version: 18
+
+      - name: Backend - Restore dependencies
+        run: dotnet restore
+
+      - name: Backend - Build
+        run: dotnet build --no-restore --configuration Debug
+
+      - name: Backend - Unit Test
+        run: dotnet test --no-build --filter "Category=Unit" --configuration Debug
+
+      - name: Create required directories for Angular
+        run: mkdir -p src/Vanguard.Angular/obj/Debug
+
+      - name: Frontend - Install dependencies
+        run: cd src/Vanguard.Angular && npm ci
+
+      - name: Frontend - Lint
+        run: cd src/Vanguard.Angular && npm run lint
+
+      - name: Frontend - Test
+        run: |
+          cd src/Vanguard.Angular
+          npx ng test --watch=false --browsers=ChromeHeadless --code-coverage
+
+      - name: Backend - Publish
+        run: dotnet publish src/Vanguard.Api/Vanguard.Api.csproj -c Debug -o publish
+
+      - name: Upload API build artifacts
+        uses: actions/upload-artifact@v4.6.1
+        with:
+          name: api-build
+          path: publish/
+          retention-days: 1
+
+      - name: Frontend - Build
+        run: cd src/Vanguard.Angular && npm run build:dev
+
+      - name: Upload frontend build artifacts
+        uses: actions/upload-artifact@v4.6.1
+        with:
+          name: frontend-build
+          path: src/Vanguard.Angular/dist/vanguard-web/browser/
+          retention-days: 1
