@@ -32,11 +32,16 @@ jobs:
       - name: Backend - Test
         run: dotnet test --no-build --filter "Category=Unit|Category=Integration" --configuration Release
 
+      - name: Create required directories for Angular
+        run: mkdir -p src/Vanguard.Angular/obj/Debug
+
       - name: Frontend - Install dependencies
         run: cd src/Vanguard.Angular && npm ci
 
       - name: Frontend - Test
-        run: cd src/Vanguard.Angular && npm run test:ci
+        run: |
+          cd src/Vanguard.Angular
+          npx ng test --watch=false --browsers=ChromeHeadless --code-coverage
 
       - name: Backend - Publish
         run: dotnet publish src/Vanguard.Api/Vanguard.Api.csproj -c Release -o publish

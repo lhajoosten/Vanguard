@@ -10,7 +10,6 @@
     "build:dev": "ng build --configuration=development",
     "build:staging": "ng build --configuration=staging",
     "build:production": "ng build --configuration=production",
-    "test:ci": "ng test --watch=false --browsers=ChromeHeadless --code-coverage",
     "lint": "ng lint",
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\""
