@@ -76,9 +76,10 @@ jobs:
 
       - name: Generate changelog
         id: changelog
-        uses: metcalfc/changelog-generator@v4.0.1
+        uses: github-changelog-generator/github-changelog-generator@v1.16.4
         with:
-          myToken: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          output: CHANGELOG.md
 
       - name: Create version tag
         id: tag_version
@@ -93,6 +94,10 @@ jobs:
         with:
           tag: ${{ steps.tag_version.outputs.new_tag }}
           title: Release ${{ steps.tag_version.outputs.new_tag }}
+          files: |
+            CHANGELOG.md
+            src/Vanguard.Angular/dist/vanguard-web/browser/
+            publish/
 
   deploy-backend:
     name: Deploy API to Production
