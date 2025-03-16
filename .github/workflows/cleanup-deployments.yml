@@ -1,0 +1,89 @@
+name: Cleanup Old Deployments
+
+on:
+  workflow_dispatch: # Manual trigger
+  schedule:
+    - cron: "0 0 * * 0" # Weekly on Sunday at midnight
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.2.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4.2.0
+        with:
+          node-version: "18"
+
+      - name: Install dependencies
+        run: npm install @actions/core @octokit/rest
+
+      - name: Cleanup deployments
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            // Get all deployments
+            const deployments = await github.rest.repos.listDeployments({
+              owner,
+              repo,
+              per_page: 100  // Adjust as needed
+            });
+
+            console.log(`Found ${deployments.data.length} deployments`);
+
+            // Keep only the most recent 5 deployments per environment
+            const deploymentsByEnv = {};
+
+            for (const deployment of deployments.data) {
+              const env = deployment.environment;
+              if (!deploymentsByEnv[env]) {
+                deploymentsByEnv[env] = [];
+              }
+              deploymentsByEnv[env].push(deployment);
+            }
+
+            let deletedCount = 0;
+
+            for (const env in deploymentsByEnv) {
+              // Sort by creation date (newest first)
+              const sorted = deploymentsByEnv[env].sort((a, b) => 
+                new Date(b.created_at) - new Date(a.created_at)
+              );
+              
+              // Keep only the most recent 3
+              const toDelete = sorted.slice(3);
+              
+              console.log(`Environment ${env}: keeping 3 newest of ${sorted.length} deployments`);
+              
+              for (const deployment of toDelete) {
+                try {
+                  // Must set deployment to inactive before deleting
+                  await github.rest.repos.createDeploymentStatus({
+                    owner,
+                    repo,
+                    deployment_id: deployment.id,
+                    state: 'inactive'
+                  });
+                  
+                  // Delete the deployment
+                  await github.rest.repos.deleteDeployment({
+                    owner,
+                    repo,
+                    deployment_id: deployment.id
+                  });
+                  
+                  deletedCount++;
+                  console.log(`Deleted deployment ${deployment.id} for environment ${env}`);
+                } catch (error) {
+                  console.error(`Error deleting deployment ${deployment.id}: ${error.message}`);
+                }
+              }
+            }
+
+            console.log(`Cleanup complete. Deleted ${deletedCount} deployments.`);
