@@ -1,10 +1,9 @@
 ﻿using Ardalis.GuardClauses;
-using Vanguard.Domain.Base;
-using Vanguard.Domain.ValueObjects;
+using Vanguard.Common.Base;
 
 namespace Vanguard.Domain.Entities.SkillAggregate
 {
-    public class SkillCategory : Entity<SkillCategoryId>
+    public class SkillCategory : EntityBase<SkillCategoryId>
     {
         public string Name { get; private set; } = string.Empty;
         public string Description { get; private set; } = string.Empty;

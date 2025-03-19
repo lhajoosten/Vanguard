@@ -1,14 +1,13 @@
 ﻿using Ardalis.GuardClauses;
-using Vanguard.Domain.Base;
+using Vanguard.Common.Base;
 using Vanguard.Domain.Entities.CourseAggregate;
 using Vanguard.Domain.Entities.UserAggregate;
 using Vanguard.Domain.Enumerations;
 using Vanguard.Domain.Events;
-using Vanguard.Domain.ValueObjects;
 
 namespace Vanguard.Domain.Entities.EnrollmentAggregate
 {
-    public class Enrollment : AggregateRoot<EnrollmentId>
+    public class Enrollment : AggregateRootBase<EnrollmentId>
     {
         private readonly Dictionary<LessonId, bool> _lessonCompletions = [];
         private readonly List<EnrollmentNote> _notes = [];

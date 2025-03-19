@@ -1,12 +1,11 @@
 ﻿using Ardalis.GuardClauses;
-using Vanguard.Domain.Base;
+using Vanguard.Common.Base;
 using Vanguard.Domain.Entities.UserAggregate;
 using Vanguard.Domain.Enumerations;
-using Vanguard.Domain.ValueObjects;
 
 namespace Vanguard.Domain.Entities.SkillAggregate
 {
-    public class SkillAssessmentAnswer : Entity<SkillAssessmentAnswerId>
+    public class SkillAssessmentAnswer : EntityBase<SkillAssessmentAnswerId>
     {
         private readonly List<SkillAssessmentQuestionOptionId> _selectedOptions = [];
 

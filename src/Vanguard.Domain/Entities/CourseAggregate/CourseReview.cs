@@ -1,10 +1,9 @@
 ﻿using Ardalis.GuardClauses;
-using Vanguard.Domain.Base;
-using Vanguard.Domain.ValueObjects;
+using Vanguard.Common.Base;
 
 namespace Vanguard.Domain.Entities.CourseAggregate
 {
-    public class CourseReview : Entity<Guid>
+    public class CourseReview : EntityBase<Guid>
     {
         public UserId UserId { get; private set; } = null!;
         public int Rating { get; private set; }

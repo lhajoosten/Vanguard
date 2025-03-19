@@ -1,9 +1,9 @@
 ﻿using Ardalis.GuardClauses;
-using Vanguard.Domain.Base;
+using Vanguard.Common.Base;
 
 namespace Vanguard.Domain.Entities.UserAggregate
 {
-    public class Role : Entity<Guid>
+    public class Role : EntityBase<RoleId>
     {
         private readonly List<Permission> _permissions = [];
 
@@ -12,7 +12,7 @@ namespace Vanguard.Domain.Entities.UserAggregate
 
         private Role() { } // For EF Core
 
-        private Role(Guid id, string name) : base(id)
+        private Role(RoleId id, string name) : base(id)
         {
             Guard.Against.Null(id, nameof(id));
             Guard.Against.NullOrWhiteSpace(name, nameof(name), "Role name cannot be empty");
@@ -22,7 +22,7 @@ namespace Vanguard.Domain.Entities.UserAggregate
 
         public static Role Create(string name)
         {
-            return new Role(Guid.NewGuid(), name);
+            return new Role(RoleId.CreateUnique(), name);
         }
 
         public void AddPermission(Permission permission)

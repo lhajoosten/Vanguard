@@ -1,15 +1,13 @@
 ﻿using Ardalis.GuardClauses;
-using Vanguard.Domain.Base;
+using Vanguard.Common.Base;
 using Vanguard.Domain.Enumerations;
-using Vanguard.Domain.ValueObjects;
 
 namespace Vanguard.Domain.Entities.SkillAggregate
 {
-    public class SkillAssessmentQuestion : Entity<SkillAssessmentQuestionId>
+    public class SkillAssessmentQuestion : EntityBase<SkillAssessmentQuestionId>
     {
         private readonly List<SkillAssessmentQuestionOption> _options = [];
 
-        public SkillId SkillId { get; private set; } = null!;
         public string Text { get; private set; } = string.Empty;
         public string Explanation { get; private set; } = string.Empty;
         public QuestionType Type { get; private set; }
@@ -17,11 +15,13 @@ namespace Vanguard.Domain.Entities.SkillAggregate
         public int PointValue { get; private set; }
         public bool IsActive { get; private set; } = true;
         public int OrderIndex { get; private set; }
-
+        public SkillId SkillId { get; private set; } = null!;
+        public SkillAssessmentId AssessmentId { get; private set; } = null!;
         public IReadOnlyCollection<SkillAssessmentQuestionOption> Options => _options.AsReadOnly();
 
         // Navigation properties for EF Core
         public virtual Skill? Skill { get; private set; }
+        public virtual SkillAssessment? Assessment { get; private set; }
 
         private SkillAssessmentQuestion() { } // For EF Core
 

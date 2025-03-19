@@ -1,9 +1,9 @@
 ﻿using Ardalis.GuardClauses;
-using Vanguard.Domain.Base;
+using Vanguard.Common.Base;
 
 namespace Vanguard.Domain.Entities.EnrollmentAggregate
 {
-    public class EnrollmentNote : Entity<Guid>
+    public class EnrollmentNote : EntityBase<Guid>
     {
         public string Content { get; private set; } = string.Empty;
 

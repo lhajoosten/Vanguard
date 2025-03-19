@@ -1,21 +1,24 @@
-﻿using Vanguard.Domain.Abstraction;
+﻿using Vanguard.Common.Abstractions;
+using Vanguard.Common.Base;
 using Vanguard.Domain.Enumerations;
-using Vanguard.Domain.ValueObjects;
 
 namespace Vanguard.Domain.Events
 {
     public record EnrollmentCompletedEvent(EnrollmentId EnrollmentId, UserId UserId, CourseId CourseId) : IDomainEvent
     {
+        public Guid Id { get; } = EnrollmentId.Value;
         public DateTime OccurredOn { get; } = DateTime.UtcNow;
     }
 
     public record EnrollmentDroppedEvent(EnrollmentId EnrollmentId, UserId UserId, CourseId CourseId) : IDomainEvent
     {
+        public Guid Id { get; } = EnrollmentId.Value;
         public DateTime OccurredOn { get; } = DateTime.UtcNow;
     }
 
     public record EnrollmentStatusChangedEvent(EnrollmentId EnrollmentId, EnrollmentStatus Status) : IDomainEvent
     {
+        public Guid Id { get; } = EnrollmentId.Value;
         public DateTime OccurredOn { get; } = DateTime.UtcNow;
     }
 
@@ -25,6 +28,7 @@ namespace Vanguard.Domain.Events
         CourseId CourseId,
         int Grade) : IDomainEvent
     {
+        public Guid Id { get; } = EnrollmentId.Value;
         public DateTime OccurredOn { get; } = DateTime.UtcNow;
     }
 
@@ -34,6 +38,13 @@ namespace Vanguard.Domain.Events
         CourseId CourseId,
         int FinalExamScore) : IDomainEvent
     {
+        public Guid Id { get; } = EnrollmentId.Value;
+        public DateTime OccurredOn { get; } = DateTime.UtcNow;
+    }
+
+    public record LessonCompletedEvent(EnrollmentId EnrollmentId, LessonId LessonId) : IDomainEvent
+    {
+        public Guid Id { get; } = EnrollmentId.Value;
         public DateTime OccurredOn { get; } = DateTime.UtcNow;
     }
 }

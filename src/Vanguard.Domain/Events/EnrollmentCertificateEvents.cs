@@ -1,5 +1,5 @@
-﻿using Vanguard.Domain.Abstraction;
-using Vanguard.Domain.ValueObjects;
+﻿using Vanguard.Common.Abstractions;
+using Vanguard.Common.Base;
 
 namespace Vanguard.Domain.Events
 {
@@ -9,6 +9,7 @@ namespace Vanguard.Domain.Events
             UserId UserId,
             CourseId CourseId) : IDomainEvent
     {
+        public Guid Id { get; } = CertificateId.Value;
         public DateTime OccurredOn { get; } = DateTime.UtcNow;
     }
 
@@ -20,6 +21,7 @@ namespace Vanguard.Domain.Events
         UserId RevokedById,
         string Reason) : IDomainEvent
     {
+        public Guid Id { get; } = CertificateId.Value;
         public DateTime OccurredOn { get; } = DateTime.UtcNow;
     }
 
@@ -28,6 +30,7 @@ namespace Vanguard.Domain.Events
         EnrollmentId EnrollmentId,
         DateTime ExpiresAt) : IDomainEvent
     {
+        public Guid Id { get; } = CertificateId.Value;
         public DateTime OccurredOn { get; } = DateTime.UtcNow;
     }
 }

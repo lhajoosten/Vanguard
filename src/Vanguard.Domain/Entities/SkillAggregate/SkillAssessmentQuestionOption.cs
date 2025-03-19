@@ -1,10 +1,9 @@
 ﻿using Ardalis.GuardClauses;
-using Vanguard.Domain.Base;
-using Vanguard.Domain.ValueObjects;
+using Vanguard.Common.Base;
 
 namespace Vanguard.Domain.Entities.SkillAggregate
 {
-    public class SkillAssessmentQuestionOption : Entity<SkillAssessmentQuestionOptionId>
+    public class SkillAssessmentQuestionOption : EntityBase<SkillAssessmentQuestionOptionId>
     {
         public string Text { get; private set; } = string.Empty;
         public bool IsCorrect { get; private set; }

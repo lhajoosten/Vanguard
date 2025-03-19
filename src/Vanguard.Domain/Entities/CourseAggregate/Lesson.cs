@@ -1,11 +1,10 @@
 ﻿using Ardalis.GuardClauses;
-using Vanguard.Domain.Base;
+using Vanguard.Common.Base;
 using Vanguard.Domain.Enumerations;
-using Vanguard.Domain.ValueObjects;
 
 namespace Vanguard.Domain.Entities.CourseAggregate
 {
-    public class Lesson : Entity<LessonId>
+    public class Lesson : EntityBase<LessonId>
     {
         private readonly List<LessonResource> _resources = [];
 
@@ -18,7 +17,7 @@ namespace Vanguard.Domain.Entities.CourseAggregate
         public ModuleId ModuleId { get; private set; } = null!;
 
         // Navigation properties for EF Core
-        public virtual Module? Module { get; private set; }
+        public virtual CourseModule? Module { get; private set; }
         public virtual IReadOnlyCollection<LessonResource> Resources => _resources.AsReadOnly();
 
         private Lesson() { } // For EF Core

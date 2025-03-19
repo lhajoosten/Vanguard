@@ -1,6 +1,6 @@
-﻿using Vanguard.Domain.Abstraction;
+﻿using Vanguard.Common.Abstractions;
+using Vanguard.Common.Base;
 using Vanguard.Domain.Enumerations;
-using Vanguard.Domain.ValueObjects;
 
 namespace Vanguard.Domain.Events
 {
@@ -10,6 +10,7 @@ namespace Vanguard.Domain.Events
          SkillId SkillId,
          ProficiencyLevel Level) : IDomainEvent
     {
+        public Guid Id { get; } = AssessmentId.Value;
         public DateTime OccurredOn { get; } = DateTime.UtcNow;
     }
 
@@ -19,6 +20,7 @@ namespace Vanguard.Domain.Events
         SkillId SkillId,
         ProficiencyLevel Level) : IDomainEvent
     {
+        public Guid Id { get; } = AssessmentId.Value;
         public DateTime OccurredOn { get; } = DateTime.UtcNow;
     }
 
@@ -28,6 +30,7 @@ namespace Vanguard.Domain.Events
         SkillId SkillId,
         UserId VerifiedById) : IDomainEvent
     {
+        public Guid Id { get; } = AssessmentId.Value;
         public DateTime OccurredOn { get; } = DateTime.UtcNow;
     }
 
@@ -36,6 +39,7 @@ namespace Vanguard.Domain.Events
         UserId UserId,
         SkillId SkillId) : IDomainEvent
     {
+        public Guid Id { get; } = AssessmentId.Value;
         public DateTime OccurredOn { get; } = DateTime.UtcNow;
     }
 
@@ -46,6 +50,7 @@ namespace Vanguard.Domain.Events
         SkillAssessmentId AssessmentId,
         ProficiencyLevel AssignedLevel) : IDomainEvent
     {
+        public Guid Id { get; } = ResultId.Value;
         public DateTime OccurredOn { get; } = DateTime.UtcNow;
     }
 
@@ -56,6 +61,7 @@ namespace Vanguard.Domain.Events
         SkillAssessmentId AssessmentId,
         UserId VerifiedById) : IDomainEvent
     {
+        public Guid Id { get; } = ResultId.Value;
         public DateTime OccurredOn { get; } = DateTime.UtcNow;
     }
 
@@ -63,6 +69,7 @@ namespace Vanguard.Domain.Events
         SkillAssessmentQuestionId QuestionId,
         SkillId SkillId) : IDomainEvent
     {
+        public Guid Id { get; } = QuestionId.Value;
         public DateTime OccurredOn { get; } = DateTime.UtcNow;
     }
 
@@ -70,6 +77,7 @@ namespace Vanguard.Domain.Events
         SkillAssessmentQuestionId QuestionId,
         SkillId SkillId) : IDomainEvent
     {
+        public Guid Id { get; } = QuestionId.Value;
         public DateTime OccurredOn { get; } = DateTime.UtcNow;
     }
 }

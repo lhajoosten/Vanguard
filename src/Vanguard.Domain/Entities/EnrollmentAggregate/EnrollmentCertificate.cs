@@ -1,14 +1,13 @@
 ﻿using Ardalis.GuardClauses;
-using Vanguard.Domain.Base;
+using Vanguard.Common.Base;
 using Vanguard.Domain.Entities.CourseAggregate;
 using Vanguard.Domain.Entities.UserAggregate;
 using Vanguard.Domain.Enumerations;
 using Vanguard.Domain.Events;
-using Vanguard.Domain.ValueObjects;
 
 namespace Vanguard.Domain.Entities.EnrollmentAggregate
 {
-    public class EnrollmentCertificate : AggregateRoot<EnrollmentCertificateId>
+    public class EnrollmentCertificate : AggregateRootBase<EnrollmentCertificateId>
     {
         public EnrollmentId EnrollmentId { get; private set; } = null!;
         public string Title { get; private set; } = string.Empty;

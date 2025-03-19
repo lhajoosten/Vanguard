@@ -1,4 +1,4 @@
-﻿using Vanguard.Domain.Base;
+﻿using Vanguard.Common.Base;
 
 namespace Vanguard.Domain.Enumerations
 {

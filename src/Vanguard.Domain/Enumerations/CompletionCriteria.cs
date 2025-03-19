@@ -1,4 +1,4 @@
-﻿using Vanguard.Domain.Base;
+﻿using Vanguard.Common.Base;
 using Vanguard.Domain.Entities.EnrollmentAggregate;
 
 namespace Vanguard.Domain.Enumerations

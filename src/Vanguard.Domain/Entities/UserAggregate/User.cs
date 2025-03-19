@@ -1,15 +1,14 @@
 ﻿using Ardalis.GuardClauses;
-using Vanguard.Domain.Base;
+using Vanguard.Common.Base;
 using Vanguard.Domain.Entities.CourseAggregate;
 using Vanguard.Domain.Entities.EnrollmentAggregate;
 using Vanguard.Domain.Entities.SkillAggregate;
 using Vanguard.Domain.Enumerations;
 using Vanguard.Domain.Events;
-using Vanguard.Domain.ValueObjects;
 
 namespace Vanguard.Domain.Entities.UserAggregate
 {
-    public class User : AggregateRoot<UserId>
+    public class User : AggregateRootBase<UserId>
     {
         private readonly List<Role> _roles = [];
 

@@ -1,16 +1,16 @@
 ﻿using Ardalis.GuardClauses;
-using Vanguard.Domain.Base;
+using Vanguard.Common.Base;
 
 namespace Vanguard.Domain.Entities.UserAggregate
 {
-    public class Permission : Entity<Guid>
+    public class Permission : EntityBase<PermissionId>
     {
         public string Name { get; private set; } = string.Empty;
         public string Description { get; private set; } = string.Empty;
 
         private Permission() { } // For EF Core
 
-        private Permission(Guid id, string name, string description) : base(id)
+        private Permission(PermissionId id, string name, string description) : base(id)
         {
             Guard.Against.Null(id, nameof(id));
             Guard.Against.NullOrWhiteSpace(name, nameof(name), "Permission name cannot be empty");
@@ -22,7 +22,7 @@ namespace Vanguard.Domain.Entities.UserAggregate
 
         public static Permission Create(string name, string description)
         {
-            return new Permission(Guid.NewGuid(), name, description);
+            return new Permission(PermissionId.CreateUnique(), name, description);
         }
     }
 }

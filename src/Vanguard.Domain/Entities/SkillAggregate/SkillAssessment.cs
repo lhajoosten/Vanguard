@@ -1,15 +1,15 @@
 ﻿using Ardalis.GuardClauses;
-using Vanguard.Domain.Base;
+using Vanguard.Common.Base;
 using Vanguard.Domain.Entities.UserAggregate;
 using Vanguard.Domain.Enumerations;
 using Vanguard.Domain.Events;
-using Vanguard.Domain.ValueObjects;
 
 namespace Vanguard.Domain.Entities.SkillAggregate
 {
-    public class SkillAssessment : AggregateRoot<SkillAssessmentId>
+    public class SkillAssessment : AggregateRootBase<SkillAssessmentId>
     {
         private readonly List<SkillAssessmentQuestion> _questions = [];
+        private readonly List<SkillAssessmentAnswer> _answers = [];
         private readonly List<SkillAssessmentResult> _results = [];
 
         public UserId UserId { get; private set; } = null!;
@@ -21,6 +21,7 @@ namespace Vanguard.Domain.Entities.SkillAggregate
         public UserId? VerifiedById { get; private set; } = null;
         public DateTime? VerifiedAt { get; private set; } = null;
         public IReadOnlyCollection<SkillAssessmentQuestion> Questions => _questions.AsReadOnly();
+        public IReadOnlyCollection<SkillAssessmentAnswer> Answers => _answers.AsReadOnly();
         public IReadOnlyCollection<SkillAssessmentResult> Results => _results.AsReadOnly();
 
         // Navigation properties for EF Core
@@ -193,7 +194,43 @@ namespace Vanguard.Domain.Entities.SkillAggregate
             ModifiedAt = DateTime.UtcNow;
         }
 
-        // Methods for managing results
+        public void UpdateQuestion(
+            SkillAssessmentQuestionId questionId,
+            string text,
+            string explanation,
+            QuestionType type,
+            DifficultyLevel difficulty,
+            int pointValue)
+        {
+            Guard.Against.Null(questionId, nameof(questionId));
+            Guard.Against.NullOrWhiteSpace(text, nameof(text), "Question text cannot be empty");
+            Guard.Against.NegativeOrZero(pointValue, nameof(pointValue), "Point value must be positive");
+            
+            var question = _questions.FirstOrDefault(q => q.Id == questionId);
+            
+            Guard.Against.Null(question, nameof(question), $"Question with ID {questionId} not found");
+            
+            question.Update(text, explanation, type, difficulty, pointValue);
+            ModifiedAt = DateTime.UtcNow;
+        }
+
+        public void RecordAnswer(SkillAssessmentAnswer answer)
+        {
+            Guard.Against.Null(answer, nameof(answer));
+            // Ensure the answer is for this assessment
+            if (answer.AssessmentId != Id)
+            {
+                throw new ArgumentException("Answer does not belong to this assessment");
+            }
+            // Ensure the answer is for a question in this assessment
+            if (!_questions.Any(q => q.Id == answer.QuestionId))
+            {
+                throw new ArgumentException("Answer does not belong to a question in this assessment");
+            }
+            _answers.Add(answer);
+            ModifiedAt = DateTime.UtcNow;
+        }
+
         public SkillAssessmentResult RecordResult(UserId userId, IEnumerable<SkillAssessmentAnswer> answers)
         {
             Guard.Against.Null(userId, nameof(userId));
@@ -211,8 +248,6 @@ namespace Vanguard.Domain.Entities.SkillAggregate
             _results.Add(result);
             ModifiedAt = DateTime.UtcNow;
 
-            // Update the assessment's proficiency level based on the most recent verified result
-            // or the highest scoring result if no verified results exist
             UpdateProficiencyLevel();
 
             return result;

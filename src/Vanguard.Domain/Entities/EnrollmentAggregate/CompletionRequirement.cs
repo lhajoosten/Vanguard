@@ -1,12 +1,11 @@
 ﻿using Ardalis.GuardClauses;
-using Vanguard.Domain.Base;
+using Vanguard.Common.Base;
 using Vanguard.Domain.Entities.CourseAggregate;
 using Vanguard.Domain.Enumerations;
-using Vanguard.Domain.ValueObjects;
 
 namespace Vanguard.Domain.Entities.EnrollmentAggregate
 {
-    public class CompletionRequirement : Entity<CompletionRequirementId>
+    public class CompletionRequirement : EntityBase<CompletionRequirementId>
     {
         public CourseId CourseId { get; private set; } = null!;
         public CompletionCriteria Criteria { get; private set; }

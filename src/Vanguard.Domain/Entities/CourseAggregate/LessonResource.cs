@@ -1,9 +1,9 @@
 ﻿using Ardalis.GuardClauses;
-using Vanguard.Domain.Base;
+using Vanguard.Common.Base;
 
 namespace Vanguard.Domain.Entities.CourseAggregate
 {
-    public class LessonResource : Entity<Guid>
+    public class LessonResource : EntityBase<Guid>
     {
         public string Title { get; private set; } = string.Empty;
         public string Url { get; private set; } = string.Empty;

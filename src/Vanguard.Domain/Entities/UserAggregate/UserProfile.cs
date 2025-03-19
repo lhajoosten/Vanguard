@@ -1,10 +1,9 @@
 ﻿using Ardalis.GuardClauses;
-using Vanguard.Domain.Base;
-using Vanguard.Domain.ValueObjects;
+using Vanguard.Common.Base;
 
 namespace Vanguard.Domain.Entities.UserAggregate
 {
-    public class UserProfile : Entity<UserProfileId>
+    public class UserProfile : EntityBase<UserProfileId>
     {
         public UserId UserId { get; private set; } = null!;
         public string Bio { get; private set; } = string.Empty;

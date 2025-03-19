@@ -1,18 +1,17 @@
 ﻿using Ardalis.GuardClauses;
-using Vanguard.Domain.Base;
+using Vanguard.Common.Base;
 using Vanguard.Domain.Entities.EnrollmentAggregate;
 using Vanguard.Domain.Entities.SkillAggregate;
 using Vanguard.Domain.Entities.UserAggregate;
 using Vanguard.Domain.Enumerations;
 using Vanguard.Domain.Events;
-using Vanguard.Domain.ValueObjects;
 
 namespace Vanguard.Domain.Entities.CourseAggregate
 {
-    public class Course : AggregateRoot<CourseId>
+    public class Course : AggregateRootBase<CourseId>
     {
-        private readonly List<Module> _modules = [];
-        private readonly List<Skill> _targetSkills = [];
+        private readonly List<CourseModule> _modules = [];
+        private readonly List<Skill> _skills = [];
         private readonly List<CourseReview> _reviews = [];
         private readonly List<CompletionRequirement> _completionRequirements = [];
         private readonly List<CourseTag> _tags = [];
@@ -27,8 +26,8 @@ namespace Vanguard.Domain.Entities.CourseAggregate
         public int EnrollmentCount { get; private set; }
         public decimal AverageRating => _reviews.Count != 0 ? (decimal)_reviews.Average(r => r.Rating) : 0;
 
-        public IReadOnlyCollection<Module> Modules => _modules.AsReadOnly();
-        public IReadOnlyCollection<Skill> TargetSkills => _targetSkills.AsReadOnly();
+        public IReadOnlyCollection<CourseModule> Modules => _modules.AsReadOnly();
+        public IReadOnlyCollection<Skill> Skills => _skills.AsReadOnly();
         public IReadOnlyCollection<CourseReview> Reviews => _reviews.AsReadOnly();
         public IReadOnlyCollection<CompletionRequirement> CompletionRequirements => _completionRequirements.AsReadOnly();
         public IReadOnlyCollection<CourseTag> Tags => _tags.AsReadOnly();
@@ -103,7 +102,7 @@ namespace Vanguard.Domain.Entities.CourseAggregate
             AddDomainEvent(new CourseUpdatedEvent(Id));
         }
 
-        public Module AddModule(string title, string description, int orderIndex)
+        public CourseModule AddModule(string title, string description, int orderIndex)
         {
             Guard.Against.NullOrWhiteSpace(title, nameof(title), "Module title cannot be empty");
             Guard.Against.Negative(orderIndex, nameof(orderIndex), "Order index must be non-negative");
@@ -117,7 +116,7 @@ namespace Vanguard.Domain.Entities.CourseAggregate
                 }
             }
 
-            var module = Module.Create(title, description, orderIndex);
+            var module = CourseModule.Create(title, description, orderIndex);
             _modules.Add(module);
             ModifiedAt = DateTime.UtcNow;
 
@@ -169,35 +168,11 @@ namespace Vanguard.Domain.Entities.CourseAggregate
             AddDomainEvent(new CourseModulesReorderedEvent(Id));
         }
 
-        public void AddTargetSkill(Skill skill)
-        {
-            Guard.Against.Null(skill, nameof(skill));
-
-            if (!_targetSkills.Contains(skill))
-            {
-                _targetSkills.Add(skill);
-                ModifiedAt = DateTime.UtcNow;
-                AddDomainEvent(new CourseTargetSkillAddedEvent(Id, skill.Id));
-            }
-        }
-
-        public void RemoveTargetSkill(Skill skill)
-        {
-            Guard.Against.Null(skill, nameof(skill));
-
-            if (_targetSkills.Contains(skill))
-            {
-                _targetSkills.Remove(skill);
-                ModifiedAt = DateTime.UtcNow;
-                AddDomainEvent(new CourseTargetSkillRemovedEvent(Id, skill.Id));
-            }
-        }
-
         public void Publish()
         {
             Guard.Against.Zero(_modules.Count, nameof(_modules), "Cannot publish a course with no modules");
 
-            if (_modules.Any(m => !m.Lessons.Any()))
+            if (_modules.Any(m => m.Lessons.Count == 0))
             {
                 throw new InvalidOperationException("Cannot publish a course with empty modules");
             }
@@ -365,6 +340,42 @@ namespace Vanguard.Domain.Entities.CourseAggregate
             }
 
             return enrollment.CheckAllRequirementsSatisfied(_completionRequirements);
+        }
+
+        public void AddTargetSkill(Skill skill)
+        {
+            Guard.Against.Null(skill, nameof(skill));
+
+            if (!_skills.Contains(skill))
+            {
+                _skills.Add(skill);
+                ModifiedAt = DateTime.UtcNow;
+                AddDomainEvent(new CourseTargetSkillAddedEvent(Id, skill.Id));
+            }
+        }
+
+        public void RemoveTargetSkill(Skill skill)
+        {
+            Guard.Against.Null(skill, nameof(skill));
+
+            if (!_skills.Contains(skill))
+            {
+                return;
+            }
+            _skills.Remove(skill);
+            ModifiedAt = DateTime.UtcNow;
+            AddDomainEvent(new CourseTargetSkillRemovedEvent(Id, skill.Id));
+        }
+
+        public void ClearTargetSkills()
+        {
+            if (_skills.Count != 0)
+            {
+                var skillIds = _skills.Select(s => s.Id).ToList();
+                _skills.Clear();
+                ModifiedAt = DateTime.UtcNow;
+                AddDomainEvent(new CourseTargetSkillsClearedEvent(Id, skillIds));
+            }
         }
 
         public void AddTag(CourseTag tag)

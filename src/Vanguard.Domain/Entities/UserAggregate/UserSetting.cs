@@ -1,11 +1,10 @@
 ﻿using Ardalis.GuardClauses;
-using Vanguard.Domain.Base;
+using Vanguard.Common.Base;
 using Vanguard.Domain.Enumerations;
-using Vanguard.Domain.ValueObjects;
 
 namespace Vanguard.Domain.Entities.UserAggregate
 {
-    public class UserSettings : Entity<UserSettingsId>
+    public class UserSettings : EntityBase<UserSettingsId>
     {
         public UserId UserId { get; private set; } = null!;
 

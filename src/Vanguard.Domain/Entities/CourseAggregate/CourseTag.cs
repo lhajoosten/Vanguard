@@ -1,10 +1,9 @@
 ﻿using Ardalis.GuardClauses;
-using Vanguard.Domain.Base;
-using Vanguard.Domain.ValueObjects;
+using Vanguard.Common.Base;
 
 namespace Vanguard.Domain.Entities.CourseAggregate
 {
-    public class CourseTag : Entity<CourseTagId>
+    public class CourseTag : EntityBase<CourseTagId>
     {
         public string Name { get; private set; } = string.Empty;
         public string Description { get; private set; } = string.Empty;
@@ -20,13 +19,14 @@ namespace Vanguard.Domain.Entities.CourseAggregate
         {
             Guard.Against.Null(id, nameof(id));
             Guard.Against.NullOrWhiteSpace(name, nameof(name), "Tag name cannot be empty");
+            Guard.Against.NullOrWhiteSpace(description, nameof(description), "Tag description cannot be empty");
 
             Name = name;
             Description = description ?? string.Empty;
             Slug = GenerateSlug(name);
         }
 
-        public static CourseTag Create(string name, string description = "")
+        public static CourseTag Create(string name, string description)
         {
             return new CourseTag(CourseTagId.CreateUnique(), name, description);
         }
