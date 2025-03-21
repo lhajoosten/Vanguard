@@ -81,11 +81,3 @@ jobs:
           name: frontend-build
           path: src/Vanguard.Angular/dist/vanguard-web/browser/
           retention-days: 1
-
-      - name: Create coverage summary
-        run: |
-          echo "# Coverage Report" > $GITHUB_STEP_SUMMARY
-          echo "## Backend Coverage" >> $GITHUB_STEP_SUMMARY
-          cat coveragereport/Summary.md >> $GITHUB_STEP_SUMMARY
-          echo "## Frontend Coverage" >> $GITHUB_STEP_SUMMARY
-          cat src/Vanguard.Angular/coverage/coverage-summary.txt >> $GITHUB_STEP_SUMMARY || echo "No frontend coverage summary available" >> $GITHUB_STEP_SUMMARY
