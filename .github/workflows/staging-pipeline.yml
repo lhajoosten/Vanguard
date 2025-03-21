@@ -30,7 +30,7 @@ jobs:
         run: dotnet build --no-restore --configuration Release
 
       - name: Backend - Test
-        run: dotnet test --no-build --filter "Category=Unit|Category=Integration" --configuration Release
+        run: dotnet test --no-build --configuration Release
 
       - name: Create required directories for Angular
         run: mkdir -p src/Vanguard.Angular/obj/Debug

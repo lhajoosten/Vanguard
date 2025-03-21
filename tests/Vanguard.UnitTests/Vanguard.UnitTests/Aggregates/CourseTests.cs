@@ -1,6 +1,5 @@
 ﻿using Vanguard.Common.Base;
 using Vanguard.Domain.Entities.CourseAggregate;
-using Vanguard.Domain.Entities.EnrollmentAggregate;
 using Vanguard.Domain.Entities.SkillAggregate;
 using Vanguard.Domain.Enumerations;
 using Vanguard.Domain.Events;
@@ -767,7 +766,7 @@ namespace Vanguard.UnitTests.Aggregates
             var userId = UserId.CreateUnique();
             var enrollment = course.EnrollUser(userId);
 
-            var lessonId = lesson.Id; 
+            var lessonId = lesson.Id;
             enrollment.MarkLessonComplete(lessonId, 1);
 
             // Act

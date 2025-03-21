@@ -1,10 +1,7 @@
-﻿using System;
-using System.Linq;
-using Vanguard.Domain.Entities.SkillAggregate;
+﻿using Vanguard.Domain.Entities.SkillAggregate;
 using Vanguard.Domain.Entities.UserAggregate;
 using Vanguard.Domain.Enumerations;
 using Vanguard.Domain.Events;
-using Xunit;
 
 namespace Vanguard.UnitTests.Aggregates
 {
@@ -38,6 +35,7 @@ namespace Vanguard.UnitTests.Aggregates
             var userCreatedEvent = Assert.IsType<UserCreatedEvent>(domainEvent);
             Assert.Equal(user.Id, userCreatedEvent.UserId);
         }
+
 
         [Theory]
         [InlineData("", "John", "Doe")]

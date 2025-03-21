@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Vanguard.Common.Base;
-using Vanguard.Domain.Entities.CourseAggregate;
+﻿using Vanguard.Common.Base;
 using Vanguard.Domain.Entities.EnrollmentAggregate;
-using Vanguard.Domain.Entities.UserAggregate;
 using Vanguard.Domain.Enumerations;
 using Vanguard.Domain.Events;
-using Xunit;
 
 namespace Vanguard.UnitTests.Aggregates
 {

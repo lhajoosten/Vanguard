@@ -18,6 +18,11 @@ namespace Vanguard.Common.Base
 
         public override bool Equals(object? obj)
         {
+            if (obj is null)
+            {
+                return false;
+            }
+
             if (obj is not Enumeration otherValue)
             {
                 return false;
@@ -52,7 +57,12 @@ namespace Vanguard.Common.Base
                 : matchingItem;
         }
 
-        public int CompareTo(object? other) => Id.CompareTo(((Enumeration)other!).Id);
+        public int CompareTo(object? other)
+        {
+            if (other is null)
+                return 1; // any instance is considered greater than null
+            return Id.CompareTo(((Enumeration)other).Id);
+        }
 
         public static bool operator ==(Enumeration left, Enumeration right)
         {
@@ -68,22 +78,46 @@ namespace Vanguard.Common.Base
 
         public static bool operator <(Enumeration left, Enumeration right)
         {
-            return left is null ? right is not null : left.CompareTo(right) < 0;
+            if (left is null && right is null)
+                return false;
+            if (left is null)
+                return true; // null is considered less than any non-null value
+            if (right is null)
+                return false; // non-null is not less than null
+            return left.CompareTo(right) < 0;
         }
 
         public static bool operator <=(Enumeration left, Enumeration right)
         {
-            return left is null || left.CompareTo(right) <= 0;
+            if (left is null && right is null)
+                return true;
+            if (left is null)
+                return true; // null is less than or equal to any non-null
+            if (right is null)
+                return false; // non-null is not less than or equal to null
+            return left.CompareTo(right) <= 0;
         }
 
         public static bool operator >(Enumeration left, Enumeration right)
         {
-            return left is not null && left.CompareTo(right) > 0;
+            if (left is null && right is null)
+                return false;
+            if (left is null)
+                return false; // null is never greater than a non-null value
+            if (right is null)
+                return true; // any non-null value is greater than null
+            return left.CompareTo(right) > 0;
         }
 
         public static bool operator >=(Enumeration left, Enumeration right)
         {
-            return left is null ? right is null : left.CompareTo(right) >= 0;
+            if (left is null && right is null)
+                return true;
+            if (left is null)
+                return false; // null is not greater than or equal to a non-null
+            if (right is null)
+                return true; // any non-null is considered greater than or equal to null
+            return left.CompareTo(right) >= 0;
         }
     }
 }
