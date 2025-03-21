@@ -7,8 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Persistence\Repositories\UserDomain\**" />
+    <EmbeddedResource Remove="Persistence\Repositories\UserDomain\**" />
+    <None Remove="Persistence\Repositories\UserDomain\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Ardalis.Specification" Version="9.0.1" />
     <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" Version="9.0.1" />
+    <PackageReference Include="Azure.Identity" Version="1.13.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.3" />
@@ -20,6 +27,11 @@
     <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.3" />
     <PackageReference Include="Serilog" Version="4.2.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Vanguard.Application\Vanguard.Application.csproj" />
+    <ProjectReference Include="..\Vanguard.Common\Vanguard.Common.csproj" />
   </ItemGroup>
 
 </Project>

@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vanguard.IntegrationTests",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vanguard.Api", "src\Vanguard.Api\Vanguard.Api.csproj", "{6C7B02DC-28A4-4F7A-9659-E79511A1043F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vanguard.Common", "src\Vanguard.Common\Vanguard.Common.csproj", "{5466403E-35B4-4037-978D-0FF7F86061B4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{6C7B02DC-28A4-4F7A-9659-E79511A1043F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C7B02DC-28A4-4F7A-9659-E79511A1043F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C7B02DC-28A4-4F7A-9659-E79511A1043F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5466403E-35B4-4037-978D-0FF7F86061B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5466403E-35B4-4037-978D-0FF7F86061B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5466403E-35B4-4037-978D-0FF7F86061B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5466403E-35B4-4037-978D-0FF7F86061B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,6 +79,7 @@ Global
 		{3141BDB0-260F-4C9D-9CF5-CD09800A1CA5} = {84C031EA-61AF-4D13-8969-D81841A5F0F4}
 		{018B5662-0C1A-46E5-8917-559B265ED581} = {84C031EA-61AF-4D13-8969-D81841A5F0F4}
 		{6C7B02DC-28A4-4F7A-9659-E79511A1043F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{5466403E-35B4-4037-978D-0FF7F86061B4} = {3DFCE3D6-F1E0-4134-BD47-DBFB09128C33}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E0C5F11D-CC96-4F94-9138-1BD4992716B2}

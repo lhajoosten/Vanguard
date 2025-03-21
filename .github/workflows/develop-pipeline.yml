@@ -4,6 +4,8 @@ name: Develop CI/CD
 on:
   push:
     branches: [develop]
+  pull_request:
+    branches: [develop]
   workflow_dispatch: # Allow manual triggering
 
 jobs:
@@ -29,8 +31,22 @@ jobs:
       - name: Backend - Build
         run: dotnet build --no-restore --configuration Debug
 
-      - name: Backend - Unit Test
-        run: dotnet test --no-build --filter "Category=Unit" --configuration Debug
+      - name: Backend - Unit Test with coverage
+        run: dotnet test --configuration Debug /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=./TestResults/Coverage/
+
+      - name: Generate backend coverage report
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.2.0
+        with:
+          reports: "**/coverage.cobertura.xml"
+          targetdir: "coveragereport"
+          reporttypes: "HtmlInline_AzurePipelines;Cobertura;Badges"
+
+      - name: Upload backend coverage report
+        uses: actions/upload-artifact@v4.6.1
+        with:
+          name: backend-coverage-report
+          path: coveragereport/
+          retention-days: 7
 
       - name: Create required directories for Angular
         run: mkdir -p src/Vanguard.Angular/obj/Debug

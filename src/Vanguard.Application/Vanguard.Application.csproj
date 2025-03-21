@@ -14,4 +14,9 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Vanguard.Common\Vanguard.Common.csproj" />
+    <ProjectReference Include="..\Vanguard.Domain\Vanguard.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

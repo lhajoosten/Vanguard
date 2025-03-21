@@ -1,13 +1,13 @@
 using Asp.Versioning;
-using Microsoft.OpenApi.Models;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json;
-using Serilog;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using Serilog;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
 using Vanguard.Infrastructure;
+using Vanguard.Infrastructure.Persistence.Services;
 
 namespace Vanguard.Api
 {
@@ -17,26 +17,13 @@ namespace Vanguard.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            /* Check for migration command */
-            var migrationOnly = args.Length > 0 && args[0] == "migrate";
-
             /* Add services to the container */
             ConfigureServices(builder);
 
             var app = builder.Build();
 
-            /* Run migrations if specifically requested */
-            if (migrationOnly)
-            {
-                using (var scope = app.Services.CreateScope())
-                {
-                    var dbContext = scope.ServiceProvider.GetRequiredService<VanguardContext>();
-                    dbContext.Database.Migrate();
-                }
-
-                Log.Information("Migration completed successfully");
-                return;
-            }
+            /* Seed the database */
+            app.InitializeDatabaseAsync().GetAwaiter().GetResult();
 
             /* Configure the HTTP request pipeline */
             ConfigureApp(app);
@@ -45,7 +32,7 @@ namespace Vanguard.Api
             var port = Environment.GetEnvironmentVariable("PORT") ?? "27324";
             if (!string.IsNullOrWhiteSpace(port))
             {
-                Log.Information("Using Heroku port: {Port}", port);
+                Log.Information("Using Development port: {Port}", port);
                 app.Urls.Clear();
                 app.Urls.Add($"http://*:{port}");
             }
@@ -63,9 +50,6 @@ namespace Vanguard.Api
                 .CreateLogger();
 
             builder.Host.UseSerilog();
-
-            // Configure database
-            ConfigureDatabase(builder);
 
             // Add CORS
             builder.Services.AddCors(options =>
@@ -147,48 +131,6 @@ namespace Vanguard.Api
             RegisterServices(builder);
         }
 
-        private static void ConfigureDatabase(WebApplicationBuilder builder)
-        {
-            // Check for Heroku SQL Server connection string format
-            var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-            if (!string.IsNullOrEmpty(databaseUrl))
-            {
-                // Parse Heroku-style connection string for SQL Server
-                try
-                {
-                    var uri = new Uri(databaseUrl);
-                    var userInfo = uri.UserInfo.Split(':');
-                    var username = userInfo[0];
-                    var password = userInfo[1];
-                    var host = uri.Host;
-                    var database = uri.AbsolutePath.TrimStart('/');
-
-                    var connectionString = $"Server={host};Database={database};User Id={username};Password={password};TrustServerCertificate=True;";
-
-                    builder.Services.AddDbContext<VanguardContext>(options =>
-                        options.UseSqlServer(connectionString,
-                            sqlServerOptions => sqlServerOptions.EnableRetryOnFailure()));
-
-                    Log.Information("Using Heroku SQL Server connection");
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "Error parsing DATABASE_URL");
-                    throw;
-                }
-            }
-            else
-            {
-                // Use connection string from configuration
-                var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-                builder.Services.AddDbContext<VanguardContext>(options =>
-                    options.UseSqlServer(connectionString,
-                        sqlServerOptions => sqlServerOptions.EnableRetryOnFailure()));
-
-                Log.Information("Using configuration connection string");
-            }
-        }
-
         private static void ConfigureAuthentication(WebApplicationBuilder builder)
         {
             {
@@ -227,6 +169,7 @@ namespace Vanguard.Api
         {
             var services = builder.Services;
 
+            services.AddInfrastructureServices(builder.Configuration);
         }
 
         private static void ConfigureApp(WebApplication app)
