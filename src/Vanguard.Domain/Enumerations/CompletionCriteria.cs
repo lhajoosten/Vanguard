@@ -13,6 +13,8 @@ namespace Vanguard.Domain.Enumerations
         public readonly static CompletionCriteria QuizzesCompleted = new(6, "Quizzes Completed", "Number of quizzes completed", "quizzes");
         public readonly static CompletionCriteria PassFinalExam = new(7, "Pass Final Exam", "Must pass the final examination", "exam");
         public readonly static CompletionCriteria ParticipateInDiscussions = new(8, "Participate in Discussions", "Minimum number of discussion posts", "discussions");
+        public readonly static CompletionCriteria TakeFinalExam = new(9, "Take Final Exam", "Must take the final examination", "exam");
+        public readonly static CompletionCriteria AllLessonsCompleted = new(10, "All Lessons Completed", "All lessons must be completed", "lessons");
 
         public string Description { get; private set; }
         public string SystemName { get; private set; }
@@ -39,6 +41,8 @@ namespace Vanguard.Domain.Enumerations
                 var c when c == QuizzesCompleted => enrollment.CompletedQuizzes >= requiredValue,
                 var c when c == PassFinalExam => enrollment.HasPassedFinalExam && enrollment.FinalExamScore >= requiredValue,
                 var c when c == ParticipateInDiscussions => enrollment.DiscussionPostCount >= requiredValue,
+                var c when c == TakeFinalExam => enrollment.HasTakenFinalExam,
+                var c when c == AllLessonsCompleted => enrollment.LessonCompletions.All(kv => kv.Value),
                 _ => false
             };
         }

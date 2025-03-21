@@ -51,7 +51,7 @@ namespace Vanguard.Domain.Entities.CourseAggregate
             Guard.Against.NullOrWhiteSpace(title, nameof(title), "Course title cannot be empty");
             Guard.Against.Null(creatorId, nameof(creatorId), "Creator ID cannot be null");
             Guard.Against.Null(level, nameof(level), "Proficiency level cannot be null");
-            Guard.Against.NegativeOrZero(estimatedDurationMinutes, nameof(estimatedDurationMinutes), "Duration cannot be negative");
+            Guard.Against.Negative(estimatedDurationMinutes, nameof(estimatedDurationMinutes), "Duration cannot be negative");
 
             Title = title;
             Description = description;

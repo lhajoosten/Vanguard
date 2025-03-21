@@ -22,4 +22,9 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Vanguard.Common\Vanguard.Common.csproj" />
+    <ProjectReference Include="..\..\..\src\Vanguard.Domain\Vanguard.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

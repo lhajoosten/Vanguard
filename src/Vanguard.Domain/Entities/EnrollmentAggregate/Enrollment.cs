@@ -78,12 +78,6 @@ namespace Vanguard.Domain.Entities.EnrollmentAggregate
             ModifiedAt = DateTime.UtcNow;
 
             AddDomainEvent(new LessonCompletedEvent(Id, lessonId));
-
-            // Auto-complete enrollment if all lessons are completed
-            if (ProgressPercentage == 100 && Status != EnrollmentStatus.Completed)
-            {
-                Complete();
-            }
         }
 
         public void MarkLessonIncomplete(LessonId lessonId, int totalLessonsCount)
