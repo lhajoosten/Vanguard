@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4.2.2
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@4.4.0
         with:
           node-version: "20.x"
           cache: "npm"
@@ -37,7 +37,13 @@ jobs:
         working-directory: frontend
 
       - name: Archive Teacher Portal build
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: teacher-portal-build
+          path: frontend/dist/apps/teacher-portal
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4.2.1
         with:
           name: teacher-portal-build
           path: frontend/dist/apps/teacher-portal
