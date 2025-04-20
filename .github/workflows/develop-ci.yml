@@ -27,7 +27,7 @@ jobs:
         run: dotnet build backend/Vanguard.sln --configuration Release --no-restore
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: backend-build
           path: backend/src/**/bin/Release/
@@ -55,7 +55,7 @@ jobs:
         working-directory: frontend
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: student-portal-build
           path: frontend/dist/apps/student-portal/
@@ -83,7 +83,7 @@ jobs:
         working-directory: frontend
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: teacher-portal-build
           path: frontend/dist/apps/teacher-portal/
