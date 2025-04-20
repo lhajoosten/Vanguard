@@ -1,0 +1,59 @@
+name: Deploy Teacher Portal
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "frontend/apps/teacher-portal/**"
+      - "frontend/libs/**"
+      - "frontend/package.json"
+  workflow_dispatch:
+
+jobs:
+  deploy-teacher-portal:
+    name: Build and Deploy Teacher Portal to Azure
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20.x"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Run tests for Teacher Portal
+        run: npm run test teacher-portal -- --watch=false --browsers=ChromeHeadless
+        working-directory: frontend
+
+      - name: Build Teacher Portal
+        run: npm run build teacher-portal -- --configuration production
+        working-directory: frontend
+
+      - name: Archive Teacher Portal build
+        uses: actions/upload-artifact@v3
+        with:
+          name: teacher-portal-build
+          path: frontend/dist/apps/teacher-portal
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy Teacher Portal to Azure Static Web App
+        id: deploy-teacher-portal
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_TEACHER_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "frontend/dist/apps/teacher-portal"
+          api_location: ""
+          output_location: ""

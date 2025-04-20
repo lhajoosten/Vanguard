@@ -1,2 +1,0 @@
-# Vanguard
-Skill Development Platform

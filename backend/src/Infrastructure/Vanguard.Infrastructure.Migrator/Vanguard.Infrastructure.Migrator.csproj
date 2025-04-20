@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="CopyAPISettings" AfterTargets="Build">
+    <Copy SourceFiles="$(SolutionDir)src\API\appsettings.json" DestinationFolder="$(OutDir)" />
+    <Copy SourceFiles="$(SolutionDir)src\API\appsettings.Development.json" DestinationFolder="$(OutDir)" Condition="Exists('$(SolutionDir)src\API\appsettings.Development.json')" />
+  </Target>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Vanguard.Application\Vanguard.Application.csproj" />
+    <ProjectReference Include="..\..\Core\Vanguard.Core\Vanguard.Core.csproj" />
+    <ProjectReference Include="..\..\Core\Vanguard.Domain\Vanguard.Domain.csproj" />
+    <ProjectReference Include="..\..\Web\Vanguard.WebApi\Vanguard.WebApi.csproj" />
+    <ProjectReference Include="..\Vanguard.Infrastructure\Vanguard.Infrastructure.csproj" />
+    <ProjectReference Include="..\Vanguard.Persistence\Vanguard.Persistence.csproj" />
+  </ItemGroup>
+
+</Project>

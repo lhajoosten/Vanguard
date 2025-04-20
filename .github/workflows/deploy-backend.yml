@@ -1,0 +1,51 @@
+name: Deploy Backend API
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+  workflow_dispatch:
+
+jobs:
+  deploy-backend:
+    name: Build and Deploy .NET Backend to Azure
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "9.0.x"
+
+      - name: Restore dependencies
+        run: dotnet restore backend/Vanguard.sln
+
+      - name: Build
+        run: dotnet build backend/Vanguard.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test backend/Vanguard.sln --configuration Release --no-build
+
+      - name: Publish
+        run: dotnet publish backend/src/Web/Vanguard.WebApi/Vanguard.WebApi.csproj -c Release -o ./publish
+
+      - name: Upload publish artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: backend-publish
+          path: ./publish/
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Azure App Service
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: "vanguard-api"
+          slot-name: "production"
+          package: "./publish"
