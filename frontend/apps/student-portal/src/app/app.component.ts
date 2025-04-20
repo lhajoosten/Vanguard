@@ -1,111 +1,92 @@
 import { Component, OnInit } from '@angular/core';
-import { PrimeNG } from 'primeng/config';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { CarouselModule } from 'primeng/carousel';
-import { Router } from '@angular/router';
-
-interface Activity {
-  avatar: string;
-  title: string;
-  description: string;
-  time: string;
-}
+import { Router, RouterModule } from '@angular/router';
+import { PrimeNG } from 'primeng/config';
 
 @Component({
-  selector: 'app-root',
-  imports: [
-    CommonModule,
-    FormsModule,
-    ButtonModule,
-    InputTextModule,
-    CarouselModule
-  ],
-  templateUrl: './app.component.html',
+  selector: 'vanguard-root',
   standalone: true,
+  imports: [CommonModule, RouterModule],
+  template: `
+    <div class="min-h-screen flex flex-col" [ngClass]="{'bg-gray-100': !darkMode, 'bg-gray-800 text-white': darkMode}">
+      <!-- Header Section -->
+      <header class="w-full py-4 px-6" [ngClass]="{'bg-white shadow-sm': !darkMode, 'bg-gray-900 shadow-md': darkMode}">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+          <h1 class="text-2xl font-bold" [ngClass]="{'text-blue-600': !darkMode, 'text-blue-300': darkMode}">
+            Vanguard Student Portal
+          </h1>
+          <div class="flex items-center gap-4">
+            <button (click)="toggleDarkMode()" class="p-2 rounded-full"
+              [ngClass]="{'bg-gray-200 hover:bg-gray-300': !darkMode, 'bg-gray-700 hover:bg-gray-600': darkMode}">
+              <span *ngIf="darkMode">☀️</span>
+              <span *ngIf="!darkMode">🌙</span>
+            </button>
+            <button (click)="navigateTo('/dashboard')" class="px-4 py-2 rounded"
+              [ngClass]="{'bg-blue-100 text-blue-700': !darkMode, 'bg-blue-800 text-white': darkMode}">
+              Dashboard
+            </button>
+            <button (click)="navigateTo('/recommendations')" class="px-4 py-2 rounded"
+              [ngClass]="{'bg-blue-100 text-blue-700': !darkMode, 'bg-blue-800 text-white': darkMode}">
+              Recommendations
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content Area -->
+      <main class="flex-1">
+        <router-outlet></router-outlet>
+      </main>
+
+      <!-- Footer -->
+      <footer class="w-full py-6 px-4"
+        [ngClass]="{'bg-white border-t border-gray-200': !darkMode, 'bg-gray-900 border-t border-gray-700': darkMode}">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
+          <p [ngClass]="{'text-gray-600': !darkMode, 'text-gray-300': darkMode}">
+            © 2025 Vanguard Skill Development Platform
+          </p>
+        </div>
+      </footer>
+    </div>
+  `
 })
 export class AppComponent implements OnInit {
   darkMode = false;
 
-  recentActivities: Activity[] = [
-    {
-      avatar: 'assets/avatars/user1.jpg',
-      title: 'Maria J. completed "Advanced Data Analysis"',
-      description: 'Earned a certification with distinction after completing all modules',
-      time: '2 hours ago'
-    },
-    {
-      avatar: 'assets/avatars/user2.jpg',
-      title: 'Alex K. started a new discussion',
-      description: 'Topic: "Best practices for frontend development in 2025"',
-      time: '4 hours ago'
-    },
-    {
-      avatar: 'assets/avatars/user3.jpg',
-      title: 'Sam T. achieved a skill milestone',
-      description: 'Reached "Advanced" level in Full Stack Development',
-      time: 'Yesterday'
-    },
-    {
-      avatar: 'assets/avatars/user4.jpg',
-      title: 'New course available',
-      description: '"Cloud Architecture Fundamentals" is now open for enrollment',
-      time: '2 days ago'
-    }
-  ];
-
-  carouselResponsiveOptions = [
-    {
-      breakpoint: '1024px',
-      numVisible: 1,
-      numScroll: 1
-    },
-    {
-      breakpoint: '768px',
-      numVisible: 1,
-      numScroll: 1
-    },
-    {
-      breakpoint: '560px',
-      numVisible: 1,
-      numScroll: 1
-    }
-  ];
-
   constructor(
-    private primeng: PrimeNG,
-    private router: Router
+    private router: Router,
+    private primeng: PrimeNG
   ) { }
 
   ngOnInit() {
+    // Enable ripple effect
     this.primeng.ripple.set(true);
-    // Check for saved theme preference
-    const savedDarkMode = localStorage.getItem('darkMode');
-    if (savedDarkMode === 'true') {
-      this.darkMode = true;
-      document.querySelector('html')?.classList.add('dark-mode');
+
+    // Check localStorage for dark mode preference
+    const storedDarkMode = localStorage.getItem('darkMode');
+    if (storedDarkMode) {
+      this.darkMode = storedDarkMode === 'true';
+      if (this.darkMode) {
+        document.querySelector('html')?.classList.add('dark-mode');
+      }
     }
   }
 
   toggleDarkMode() {
     this.darkMode = !this.darkMode;
-    const element = document.querySelector('html');
-    element?.classList.toggle('dark-mode');
+
+    // Update HTML class for global styling
+    if (this.darkMode) {
+      document.querySelector('html')?.classList.add('dark-mode');
+    } else {
+      document.querySelector('html')?.classList.remove('dark-mode');
+    }
 
     // Save preference to localStorage
     localStorage.setItem('darkMode', this.darkMode.toString());
   }
 
-  enterPortal() {
-    // Navigate to the main dashboard
-    this.navigateTo('/dashboard');
-  }
-
   navigateTo(route: string) {
-    // Navigate to the specified route
     this.router.navigate([route]);
-    console.log(`Navigating to ${route}...`);
   }
 }

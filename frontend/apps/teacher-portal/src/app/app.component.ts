@@ -1,120 +1,98 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule, Router } from '@angular/router';
 import { PrimeNG } from 'primeng/config';
 import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { CarouselModule } from 'primeng/carousel';
-import { Router } from '@angular/router';
-
-interface Session {
-  id: string;
-  date: string;
-  title: string;
-  description: string;
-  time: string;
-  students: number;
-}
-
-interface TeacherStats {
-  activeCourses: number;
-  totalStudents: number;
-  pendingAssignments: number;
-  averageRating: number;
-}
 
 @Component({
-  selector: 'app-root',
+  selector: 'vanguard-root',
+  standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
-    ButtonModule,
-    InputTextModule,
-    CarouselModule
+    RouterModule,
+    ButtonModule
   ],
-  templateUrl: './app.component.html',
-  standalone: true,
+  template: `
+    <div class="min-h-screen flex flex-col" [ngClass]="{'bg-gray-100': !darkMode, 'bg-gray-800 text-white': darkMode}">
+      <!-- Header Section -->
+      <header class="w-full py-4 px-6" [ngClass]="{'bg-white shadow-sm': !darkMode, 'bg-gray-900 shadow-md': darkMode}">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+          <div class="flex items-center">
+            <img src="assets/vanguard-logo.svg" alt="Vanguard Logo" class="h-8 w-auto mr-3">
+            <h1 class="text-2xl font-bold" [ngClass]="{'text-gray-900': !darkMode, 'text-white': darkMode}">
+              Vanguard Teacher Portal
+            </h1>
+          </div>
+          <div class="flex items-center gap-4">
+            <button (click)="toggleDarkMode()" class="p-2 rounded-full"
+              [ngClass]="{'bg-gray-200 hover:bg-gray-300': !darkMode, 'bg-gray-700 hover:bg-gray-600': darkMode}">
+              <span *ngIf="darkMode">☀️</span>
+              <span *ngIf="!darkMode">🌙</span>
+            </button>
+            <p-button label="Dashboard" (onClick)="navigateTo('/dashboard')"
+              styleClass="p-button-text"></p-button>
+            <p-button label="Courses" (onClick)="navigateTo('/courses')"
+              styleClass="p-button-text"></p-button>
+            <p-button label="Assessments" (onClick)="navigateTo('/assessments')"
+              styleClass="p-button-text"></p-button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content Area -->
+      <main class="flex-1">
+        <router-outlet></router-outlet>
+      </main>
+
+      <!-- Footer -->
+      <footer class="w-full py-6 px-4"
+        [ngClass]="{'bg-white border-t border-gray-200': !darkMode, 'bg-gray-900 border-t border-gray-700': darkMode}">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
+          <p [ngClass]="{'text-gray-600': !darkMode, 'text-gray-300': darkMode}">
+            © 2025 Vanguard Skill Development Platform
+          </p>
+          <div class="flex gap-4 mt-4 md:mt-0">
+            <a href="#" [ngClass]="{'text-gray-600 hover:text-gray-900': !darkMode, 'text-gray-300 hover:text-white': darkMode}">
+              Instructor Support
+            </a>
+            <a href="#" [ngClass]="{'text-gray-600 hover:text-gray-900': !darkMode, 'text-gray-300 hover:text-white': darkMode}">
+              Privacy Policy
+            </a>
+            <a href="#" [ngClass]="{'text-gray-600 hover:text-gray-900': !darkMode, 'text-gray-300 hover:text-white': darkMode}">
+              Terms of Service
+            </a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  `
 })
 export class AppComponent implements OnInit {
   darkMode = false;
 
-  stats: TeacherStats = {
-    activeCourses: 5,
-    totalStudents: 127,
-    pendingAssignments: 23,
-    averageRating: 4.8
-  };
-
-  upcomingSessions: Session[] = [
-    {
-      id: 'session1',
-      date: '23',
-      title: 'Web Development Fundamentals',
-      description: 'Introduction to HTML5 and CSS3 core concepts',
-      time: 'Today at 2:00 PM',
-      students: 24
-    },
-    {
-      id: 'session2',
-      date: '25',
-      title: 'Database Design Workshop',
-      description: 'Hands-on session on relational database design principles',
-      time: 'Wednesday at 10:00 AM',
-      students: 18
-    },
-    {
-      id: 'session3',
-      date: '26',
-      title: 'JavaScript Advanced Concepts',
-      description: 'Deep dive into closures, promises, and async programming',
-      time: 'Thursday at 3:30 PM',
-      students: 21
-    },
-    {
-      id: 'session4',
-      date: '29',
-      title: 'Project Presentations',
-      description: 'Final project presentations and peer feedback session',
-      time: 'Monday at 1:00 PM',
-      students: 32
-    }
-  ];
-
-  carouselResponsiveOptions = [
-    {
-      breakpoint: '1024px',
-      numVisible: 1,
-      numScroll: 1
-    },
-    {
-      breakpoint: '768px',
-      numVisible: 1,
-      numScroll: 1
-    },
-    {
-      breakpoint: '560px',
-      numVisible: 1,
-      numScroll: 1
-    }
-  ];
-
   constructor(
-    private primeng: PrimeNG,
-    private router: Router
+    private router: Router,
+    private primeng: PrimeNG
   ) { }
 
   ngOnInit() {
+    // Enable ripple effect
     this.primeng.ripple.set(true);
-    // Check for saved theme preference
-    const savedDarkMode = localStorage.getItem('darkMode');
-    if (savedDarkMode === 'true') {
-      this.darkMode = true;
-      document.querySelector('html')?.classList.add('dark-mode');
+
+    // Check localStorage for dark mode preference
+    const storedDarkMode = localStorage.getItem('darkMode');
+    if (storedDarkMode) {
+      this.darkMode = storedDarkMode === 'true';
+      if (this.darkMode) {
+        document.querySelector('html')?.classList.add('dark-mode');
+      }
     }
   }
 
   toggleDarkMode() {
     this.darkMode = !this.darkMode;
+
+    // Update HTML class for global styling
     const element = document.querySelector('html');
     element?.classList.toggle('dark-mode');
 
@@ -122,20 +100,7 @@ export class AppComponent implements OnInit {
     localStorage.setItem('darkMode', this.darkMode.toString());
   }
 
-  enterDashboard() {
-    // Navigate to the main dashboard
-    this.navigateTo('/dashboard');
-  }
-
   navigateTo(route: string) {
-    // Navigate to the specified route
     this.router.navigate([route]);
-    console.log(`Navigating to ${route}...`);
-  }
-
-  startSession(sessionId: string) {
-    console.log(`Starting session ${sessionId}`);
-    // Implementation for starting a virtual class session
-    this.navigateTo(`/classroom/${sessionId}`);
   }
 }
