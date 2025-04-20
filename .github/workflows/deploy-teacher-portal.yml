@@ -1,16 +1,16 @@
 name: Deploy Teacher Portal
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Unit Tests"]
     branches: [main]
-    paths:
-      - "frontend/apps/teacher-portal/**"
-      - "frontend/libs/**"
-      - "frontend/package.json"
+    types:
+      - completed
   workflow_dispatch:
 
 jobs:
-  deploy-teacher-portal:
+  deploy-student-portal:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Build and Deploy Teacher Portal to Azure
     runs-on: ubuntu-latest
 
@@ -40,13 +40,13 @@ jobs:
         uses: actions/upload-artifact@v4.6.2
         with:
           name: teacher-portal-build
-          path: frontend/dist/apps/teacher-portal
+          path: frontend/dist/teacher-portal
 
       - name: Download artifacts
         uses: actions/download-artifact@v4.2.1
         with:
           name: teacher-portal-build
-          path: frontend/dist/apps/teacher-portal
+          path: frontend/dist/teacher-portal
 
       - name: Login to Azure
         uses: azure/login@v1
@@ -60,6 +60,6 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_TEACHER_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "frontend/dist/apps/teacher-portal"
+          app_location: "frontend/dist/teacher-portal"
           api_location: ""
           output_location: ""

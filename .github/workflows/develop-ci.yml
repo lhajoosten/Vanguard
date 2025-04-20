@@ -58,7 +58,7 @@ jobs:
         uses: actions/upload-artifact@v4.6.2
         with:
           name: student-portal-build
-          path: frontend/dist/apps/student-portal/
+          path: frontend/dist/student-portal/
 
   build-teacher-portal:
     name: Build Teacher Portal
@@ -86,4 +86,4 @@ jobs:
         uses: actions/upload-artifact@v4.6.2
         with:
           name: teacher-portal-build
-          path: frontend/dist/apps/teacher-portal/
+          path: frontend/dist/teacher-portal/
