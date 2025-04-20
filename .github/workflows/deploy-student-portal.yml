@@ -29,11 +29,11 @@ jobs:
         working-directory: frontend
 
       - name: Run tests for Student Portal
-        run: npm run test student-portal -- --watch=false --browsers=ChromeHeadless
+        run: npm run test:student
         working-directory: frontend
 
       - name: Build Student Portal
-        run: npm run build student-portal -- --configuration production
+        run: npm run build:student
         working-directory: frontend
 
       - name: Archive Student Portal build

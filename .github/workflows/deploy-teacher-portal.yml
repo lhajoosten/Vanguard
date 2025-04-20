@@ -29,11 +29,11 @@ jobs:
         working-directory: frontend
 
       - name: Run tests for Teacher Portal
-        run: npm run test teacher-portal -- --watch=false --browsers=ChromeHeadless
+        run: npm run test:teacher
         working-directory: frontend
 
       - name: Build Teacher Portal
-        run: npm run build teacher-portal -- --configuration production
+        run: npm run build:teacher
         working-directory: frontend
 
       - name: Archive Teacher Portal build
