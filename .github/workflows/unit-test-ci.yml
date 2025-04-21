@@ -2,9 +2,17 @@ name: Unit Tests
 
 on:
   push:
-    branches: [main, develop]
+    branches: [develop]
+    paths:
+      - "backend/**"
+      - "frontend/**"
+      - ".github/workflows/unit-test-ci.yml"
   pull_request:
     branches: [main, develop]
+    paths:
+      - "backend/**"
+      - "frontend/**"
+      - ".github/workflows/unit-test-ci.yml"
   workflow_dispatch:
 
 jobs:
