@@ -47,8 +47,6 @@ updates:
     commit-message:
       prefix: "nuget"
       include: "scope"
-    # Only allow patch and minor version updates
-    versioning-strategy: "auto"
 
   # GitHub Actions
   - package-ecosystem: "github-actions"
