@@ -3,11 +3,11 @@
     /// <summary>
     /// Base class for domain events
     /// </summary>
-    public abstract class DomainEvent : IDomainEvent
+    public abstract class DomainEventBase : IDomainEvent
     {
         public DateTime OccurredOn { get; }
 
-        protected DomainEvent()
+        protected DomainEventBase()
         {
             OccurredOn = DateTime.UtcNow;
         }

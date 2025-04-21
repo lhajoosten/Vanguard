@@ -11,7 +11,7 @@ namespace Vanguard.Core.Interfaces
     public interface IQueryRepository<T> : IReadRepositoryBase<T> where T : class, IAggregateRoot
     {
         // Add any additional query methods not covered by IReadRepositoryBase
-        Task<T> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+        Task<T> GetByIdAsync(int id, CancellationToken cancellationToken = default);
         Task<IReadOnlyList<T>> ListAllAsync(CancellationToken cancellationToken = default);
         Task<IReadOnlyList<T>> ListAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
     }

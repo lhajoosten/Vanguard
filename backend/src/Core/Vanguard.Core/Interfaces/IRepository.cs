@@ -10,7 +10,7 @@ namespace Vanguard.Core.Interfaces
     public interface IRepository<T> : IRepositoryBase<T> where T : class, IAggregateRoot
     {
         // Add any additional methods not covered by IRepositoryBase
-        Task<T> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+        Task<T> GetByIdAsync(int id, CancellationToken cancellationToken = default);
         Task<IReadOnlyList<T>> ListAllAsync(CancellationToken cancellationToken = default);
     }
 }

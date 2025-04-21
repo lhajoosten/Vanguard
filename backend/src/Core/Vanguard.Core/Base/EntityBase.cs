@@ -2,19 +2,16 @@
 {
     public abstract class EntityBase : IEntity
     {
-        public Guid Id { get; protected set; }
+        public int Id { get; protected set; }
 
-        protected EntityBase()
-        {
-            Id = Guid.NewGuid();
-        }
+        protected EntityBase() { }
 
-        protected EntityBase(Guid id)
+        protected EntityBase(int id)
         {
             Id = id;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is null)
                 return false;
@@ -26,9 +23,6 @@
                 return false;
 
             if (obj is not EntityBase other)
-                return false;
-
-            if (Id == Guid.Empty || other.Id == Guid.Empty)
                 return false;
 
             return Id == other.Id;

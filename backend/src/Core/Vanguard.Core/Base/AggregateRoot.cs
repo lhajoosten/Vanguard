@@ -13,7 +13,7 @@ namespace Vanguard.Core.Base
 
         protected AggregateRoot() : base() { }
 
-        protected AggregateRoot(Guid id) : base(id) { }
+        protected AggregateRoot(int id) : base(id) { }
 
         protected void AddDomainEvent(IDomainEvent domainEvent)
         {
