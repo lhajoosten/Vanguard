@@ -1,0 +1,64 @@
+# Comprehensive dependabot.yml configuration for the Vanguard project
+
+version: 2
+updates:
+  # Frontend NPM dependencies
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "daily"
+      time: "08:00"
+      timezone: "Europe/Amsterdam"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "frontend"
+    assignees:
+      - "lhajooosten"
+    reviewers:
+      - "lhajooosten"
+    commit-message:
+      prefix: "npm"
+      include: "scope"
+    # Specify which dependency updates to receive
+    allow:
+      # Allow updates for Angular packages
+      - dependency-name: "@angular*"
+      # Allow updates for security fixes
+      - dependency-type: "development"
+
+  # Backend NuGet dependencies
+  - package-ecosystem: "nuget"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Amsterdam"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "backend"
+      - ".NET"
+    assignees:
+      - "lhajooosten"
+    reviewers:
+      - "lhajooosten"
+    commit-message:
+      prefix: "nuget"
+      include: "scope"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/.github/workflows"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "10:00"
+      timezone: "Europe/Amsterdam"
+    labels:
+      - "dependencies"
+      - "ci/cd"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
