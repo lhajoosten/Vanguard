@@ -36,10 +36,6 @@ jobs:
         run: |
           echo "Build output directory structure:"
           find frontend/dist -type f | sort
-          echo "Contents of student-portal directory:"
-          ls -la frontend/dist/student-portal/ || echo "Directory doesn't exist"
-          echo "Looking for index.html:"
-          find frontend/dist -name "index.html"
 
       - name: Login to Azure
         uses: azure/login@v1
@@ -53,7 +49,7 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_STUDENT_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "frontend/dist/student-portal"
+          app_location: "frontend/dist/student-portal/browser"
           api_location: ""
           output_location: ""
           skip_app_build: true
