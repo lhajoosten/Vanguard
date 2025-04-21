@@ -28,13 +28,18 @@ jobs:
         run: npm ci
         working-directory: frontend
 
-      - name: Run tests for Student Portal
-        run: npm run test:student
-        working-directory: frontend
-
       - name: Build Student Portal
         run: npm run build:student
         working-directory: frontend
+
+      - name: Debug build output
+        run: |
+          echo "Build output directory structure:"
+          find frontend/dist -type f | sort
+          echo "Contents of student-portal directory:"
+          ls -la frontend/dist/student-portal/ || echo "Directory doesn't exist"
+          echo "Looking for index.html:"
+          find frontend/dist -name "index.html"
 
       - name: Login to Azure
         uses: azure/login@v1

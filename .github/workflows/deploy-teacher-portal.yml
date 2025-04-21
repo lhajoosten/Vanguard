@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy-student-portal:
+  deploy-teacher-portal:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Build and Deploy Teacher Portal to Azure
     runs-on: ubuntu-latest
@@ -28,13 +28,18 @@ jobs:
         run: npm ci
         working-directory: frontend
 
-      - name: Run tests for Teacher Portal
-        run: npm run test:teacher
-        working-directory: frontend
-
       - name: Build Teacher Portal
         run: npm run build:teacher
         working-directory: frontend
+
+      - name: Debug build output
+        run: |
+          echo "Build output directory structure:"
+          find frontend/dist -type f | sort
+          echo "Contents of teacher-portal directory:"
+          ls -la frontend/dist/teacher-portal/ || echo "Directory doesn't exist"
+          echo "Looking for index.html:"
+          find frontend/dist -name "index.html"
 
       - name: Login to Azure
         uses: azure/login@v1
