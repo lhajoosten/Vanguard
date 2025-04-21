@@ -51,7 +51,7 @@ jobs:
         working-directory: frontend
 
       - name: Build Student Portal
-        run: npm run build:student-portal
+        run: npm run build:student
         working-directory: frontend
 
       - name: Upload build artifacts
@@ -79,7 +79,7 @@ jobs:
         working-directory: frontend
 
       - name: Build Teacher Portal
-        run: npm run build:teacher-portal
+        run: npm run build:teacher
         working-directory: frontend
 
       - name: Upload build artifacts
