@@ -11,11 +11,9 @@
     <PackageReference Include="MediatR" Version="12.5.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
   </ItemGroup>
-
+  
   <ItemGroup>
-    <Folder Include="Entities\" />
-    <Folder Include="Exceptions\" />
-    <Folder Include="Extensions\" />
+    <ProjectReference Include="..\Vanguard.Core\Vanguard.Core.csproj" />
   </ItemGroup>
   
 </Project>
