@@ -9,6 +9,7 @@ updates:
       interval: "daily"
       time: "08:00"
       timezone: "Europe/Amsterdam"
+    target-branch: "develop"
     open-pull-requests-limit: 10
     labels:
       - "dependencies"
@@ -35,6 +36,7 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "Europe/Amsterdam"
+    target-branch: "develop"
     open-pull-requests-limit: 5
     labels:
       - "dependencies"
