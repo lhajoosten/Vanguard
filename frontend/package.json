@@ -23,7 +23,7 @@
     "@angular/core": "20.0.2",
     "@angular/forms": "20.0.2",
     "@angular/platform-browser": "20.0.2",
-    "@angular/platform-browser-dynamic": "20.0.2",
+    "@angular/platform-browser-dynamic": "20.0.3",
     "@angular/router": "20.0.2",
     "@primeng/themes": "^19.1.0",
     "primeicons": "^7.0.0",
